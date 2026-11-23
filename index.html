@@ -1,336 +1,184 @@
 <!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="MenuLens">
-<meta name="theme-color" content="#0f766e">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon.png">
-<title>MenuLens 菜單翻譯</title>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MenuLens"><meta name="theme-color" content="#1f6f7a">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon.png">
+<title>MenuLens</title>
 <style>
-:root{--bg:#f4f6f7;--card:#fff;--text:#111827;--sub:#6b7280;--teal:#0f766e;--onteal:#fff;--line:#e5e7eb;--red:#b91c1c;--redbg:#fee2e2}
-@media(prefers-color-scheme:dark){:root{--bg:#0e1214;--card:#1a1f23;--text:#f3f4f6;--sub:#9ca3af;--teal:#2dd4bf;--onteal:#042f2e;--line:#2b3137;--red:#fca5a5;--redbg:#3b1416}}
+:root{--bg:#f1f5f6;--cd:#fff;--tx:#0f172a;--sub:#64748b;--pri:#1f6f7a;--dk:#0f2a3d;--ln:#e2e8f0;--red:#dc2626;--rb:#fef2f2}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1114;--cd:#162027;--tx:#f1f5f9;--sub:#94a3b8;--pri:#38b2c0;--dk:#0a1a26;--ln:#26343d;--rb:#3b1416}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif}
-button,input,select{font:inherit;color:inherit}
-.hidden{display:none!important}
-.pad{padding:16px}
-.sub{color:var(--sub);font-size:.875rem}
-h1{margin:.2em 0;font-size:1.6rem}h3{margin:1.2em 0 .2em}
-.tab{display:none;padding:calc(16px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom))}
-.tab.active{display:block}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
-nav button{flex:1;background:none;border:0;padding:10px 0;color:var(--sub)}
-nav button.on{color:var(--teal);font-weight:700}
-.btn{display:block;width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);text-align:center;margin:10px 0;cursor:pointer}
-.btn.primary,button.primary{background:var(--teal);color:var(--onteal);border-color:var(--teal);font-weight:700}
-.hero{text-align:center;margin:36px 0 18px}.hero .logo{font-size:64px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
-.err{color:var(--red);background:var(--redbg);padding:10px 12px;border-radius:10px;white-space:pre-wrap;font-size:.875rem}
-.screen{position:fixed;inset:0;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
-#menuScreen{z-index:10}#detail{z-index:20}#waiter{z-index:30}
-.topbar{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:90px 1fr 90px;align-items:center;gap:6px;background:var(--card);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 10px 8px;text-align:center;font-weight:700}
-.topbar button{background:none;border:0;color:var(--teal);padding:6px;font-weight:600}
-.topbar button:first-child{text-align:left}.topbar button:last-child{text-align:right}
-.topbar div{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-input[type=search],input[type=text],input[type=password],select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0}
-.chip{white-space:nowrap;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);cursor:pointer}
-.chip.on{background:var(--teal);color:var(--onteal);border-color:var(--teal)}
-.row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer}
-.row .name{font-weight:700;font-size:1.05rem}
-.price{color:var(--teal);font-weight:700}
-.tag{color:var(--red);font-size:.8125rem;margin-top:2px}
-.warn{background:var(--redbg);color:var(--red);padding:12px;border-radius:12px;margin:12px 0}
-.orig{font-size:1.25rem}
-.nut{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;gap:4px}.nut b{display:block}
-.bottombar{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
-.bottombar button{width:100%;padding:14px;border-radius:12px;border:0}
-.wline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
-.big{font-size:1.6rem;font-weight:800}
-.qty{display:flex;align-items:center;gap:12px;font-size:1.4rem}
-.qty button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:1.3rem}
-.total{display:flex;justify-content:space-between;font-size:1.2rem;padding:16px 0}
-label.opt{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
-#busy{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px}
-.spin{width:38px;height:38px;border:4px solid #fff5;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
-#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111c;color:#fff;padding:8px 14px;border-radius:99px;z-index:60;font-size:.875rem}
-</style>
-</head>
-<body>
-
-<section id="tab-scan" class="tab active">
-  <div class="hero"><div class="logo">🍜</div><h1>拍下菜單,馬上看懂</h1><div class="sub">翻譯 · 過敏原 · 價格換算</div></div>
-  <div id="needKey" class="card hidden">還沒設定 Gemini API Key。請到「設定」貼上(免費申請)。</div>
-  <label class="btn primary">📷 掃描菜單<input id="fileCam" type="file" accept="image/*" capture="environment" hidden></label>
-  <label class="btn">🖼 從相簿選擇<input id="fileLib" type="file" accept="image/*" hidden></label>
-  <div id="err" class="err hidden"></div>
-</section>
-<section id="tab-history" class="tab"></section>
-<section id="tab-settings" class="tab"></section>
-
-<nav>
-  <button data-tab="scan" class="on">📷<br><small>掃描</small></button>
-  <button data-tab="history">🕘<br><small>歷史</small></button>
-  <button data-tab="settings">⚙️<br><small>設定</small></button>
-</nav>
-
-<div id="menuScreen" class="screen hidden">
-  <div class="topbar"><button data-act="closeMenu">‹ 返回</button><div id="menuTitle"></div><button data-act="order" id="orderBtn">點餐 0</button></div>
-  <div class="pad"><input id="search" type="search" placeholder="搜尋菜品"><div id="chips" class="chips"></div><div id="list"></div>
-  <p class="sub">過敏原與營養資訊由 AI 推測,可能有誤。若有嚴重過敏,請務必向店員確認。</p></div>
-</div>
-<div id="detail" class="screen hidden"></div>
-<div id="waiter" class="screen hidden"></div>
-<div id="busy" class="hidden"><div class="spin"></div><div>正在翻譯菜單…</div></div>
-<div id="toast" class="hidden"></div>
-
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans",sans-serif}
+button,input,select{font:inherit;color:inherit}.hid{display:none!important}.sub,small{color:var(--sub);font-size:.8rem}
+h2,h3,h4{margin:.5em 0 .25em}
+.tab{display:none;padding:calc(14px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom))}.tab.on{display:block}
+nav{position:fixed;inset:auto 0 0;display:flex;background:var(--cd);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;background:0;border:0;padding:8px 0;color:var(--sub);font-size:1.2rem}nav button small{display:block}nav .on{color:var(--pri);font-weight:700}
+.scan{display:flex;gap:14px;align-items:center;background:var(--dk);color:#fff;border-radius:18px;padding:20px;margin:14px 0 10px;cursor:pointer}
+.scan small{display:block;color:#9fb6c3}.cam{background:#fff;border-radius:50%;width:54px;height:54px;display:grid;place-items:center;font-size:1.5rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:block;text-align:center;padding:13px;border-radius:12px;border:1px solid var(--ln);background:var(--cd);cursor:pointer;font-weight:600}
+.btn.pri{background:var(--pri);color:#fff;border-color:var(--pri)}.btn.dk{background:var(--dk);color:#fff;border:0;width:100%}
+.card{background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:12px 14px;margin:10px 0}
+.err{background:var(--rb);color:var(--red);padding:10px 12px;border-radius:10px;white-space:pre-wrap;font-size:.85rem;margin:10px 0}
+.hr{display:flex;gap:12px;align-items:center;background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:10px;margin:8px 0;cursor:pointer}
+.hr>div:nth-child(2){flex:1;min-width:0}.th{width:46px;height:56px;border-radius:8px;background:#cbd5e1 center/cover;display:grid;place-items:center}
+.scr{position:fixed;inset:0;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}#menu{z-index:10}#det{z-index:20}#wait{z-index:30}
+.bar{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:48px 1fr 84px;align-items:center;background:var(--cd);border-bottom:1px solid var(--ln);padding:calc(8px + env(safe-area-inset-top)) 8px 8px}
+.bar.pri{background:var(--pri);color:#fff;grid-template-columns:48px 1fr 48px}.bar button{background:0;border:0;color:var(--pri);font-size:1.3rem;font-weight:700}.bar.pri button{color:#fff}
+.tt{text-align:center;min-width:0;line-height:1.2}.tt small{display:block}
+.pd{padding:14px 16px}.up{margin-top:-18px;background:var(--bg);border-radius:20px 20px 0 0;position:relative;padding-bottom:110px}
+input[type=search],input[type=text],input[type=password],select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--ln);background:var(--cd)}
+.tabs{display:flex;gap:18px;overflow-x:auto;padding:12px 2px;border-bottom:1px solid var(--ln);margin-bottom:6px}
+.tb{white-space:nowrap;color:var(--sub);font-weight:600;padding-bottom:6px;cursor:pointer}.tb.on{color:var(--pri);border-bottom:3px solid var(--pri)}
+.it{display:flex;gap:12px;background:var(--cd);border:1px solid var(--ln);border-radius:16px;padding:12px;margin:10px 0;cursor:pointer}
+.it .tx{flex:1;min-width:0}.it p{margin:.2em 0;font-size:.85rem;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.pr>b{font-size:1.05rem}
+.ph{position:relative;flex:none;width:88px;height:88px;border-radius:12px;background:#d7e4e7 center/cover;display:grid;place-items:center;font-size:2.4rem}
+.pl{position:absolute;right:-6px;bottom:-6px;width:32px;height:32px;border-radius:50%;border:2px solid var(--cd);background:var(--pri);color:#fff;font-size:1.3rem;line-height:1}
+.ch{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:2px 8px}
+.ch i,.mc i{width:8px;height:8px;border-radius:50%;display:inline-block}.ch.r{background:var(--rb);color:var(--red);border-color:var(--red)}
+.hero{position:relative;height:250px;background:#d7e4e7 center/cover;display:grid;place-items:center}.em{font-size:5rem}
+.x{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:34px;height:34px;border-radius:50%;border:0;background:#0008;color:#fff}
+.bd{position:absolute;right:10px;bottom:28px;background:#0009;color:#fff;border-radius:6px;padding:2px 8px}
+.rw{display:flex;justify-content:space-between;align-items:center;gap:10px}.pc{font-size:1.4rem;color:var(--pri)}.og{font-size:1.3rem;font-weight:700}
+.sp{width:44px;height:44px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:1.1rem}
+.wn{background:var(--rb);color:var(--red);border:1px solid var(--red);border-radius:14px;padding:12px;margin:12px 0}
+.ls{background:var(--cd);border:1px solid var(--ln);border-radius:12px}.ls div{padding:9px 12px;border-bottom:1px solid var(--ln)}.ls div:last-child{border:0}
+.chs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.kc{font-size:1.6rem}.kc b{font-size:2rem}
+.sb{display:flex;height:8px;border-radius:9px;overflow:hidden;margin:8px 0}.mc{display:grid;grid-template-columns:repeat(4,1fr);font-size:.75rem;color:var(--sub)}.mc b{display:block;color:var(--tx);font-size:1rem}
+.bb{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;flex-wrap:wrap;background:var(--cd);border-top:1px solid var(--ln);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}.bb .btn{flex:1}.bb .rw{width:100%}
+.big{font-size:1.7rem}.wl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--ln)}.wl b{font-size:1.7rem;display:block;line-height:1.2}
+.qty{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:800}.qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--ln);background:var(--cd);font-size:1.1rem}
+label.f{display:block;margin:12px 0 4px;font-weight:600}.ao{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)}
+#busy{position:fixed;inset:0;z-index:50;background:#000a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#busy i{width:36px;height:36px;border:4px solid #fff5;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111d;color:#fff;padding:8px 14px;border-radius:99px;z-index:60;font-size:.85rem;max-width:90%}
+</style></head><body>
+<section id="t-scan" class="tab on"></section><section id="t-hist" class="tab"></section><section id="t-set" class="tab"></section>
+<nav id="nav"></nav><div id="menu" class="scr hid"></div><div id="det" class="scr hid"></div><div id="wait" class="scr hid"></div>
+<div id="busy" class="hid"><i></i><div id="bt"></div></div><div id="toast" class="hid"></div>
 <script>
 'use strict';
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } };
-const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch { toast('儲存失敗(空間不足?)') } };
-const show = s => $(s).classList.remove('hidden');
-const hide = s => $(s).classList.add('hidden');
-let toastT; function toast(t){ const el=$('#toast'); el.textContent=t; show('#toast'); clearTimeout(toastT); toastT=setTimeout(()=>hide('#toast'),1800); }
+const $=s=>$d.querySelector(s),$d=document,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{toast('Storage full')}};
+const show=s=>$(s).classList.remove('hid'),hide=s=>$(s).classList.add('hid');
+let tt;function toast(m){const e=$('#toast');e.textContent=m;show('#toast');clearTimeout(tt);tt=setTimeout(()=>hide('#toast'),2200)}
 
-/* ---------- 設定 ---------- */
-const ALG = {gluten:'麩質',crustaceans:'甲殼類',eggs:'蛋',fish:'魚',peanuts:'花生',soy:'大豆',milk:'乳製品',treeNuts:'堅果',celery:'芹菜',mustard:'芥末',sesame:'芝麻',sulphites:'亞硫酸鹽',lupin:'羽扇豆',molluscs:'軟體動物'};
-const CURRENCIES = ['TWD','USD','JPY','EUR','KRW','HKD','CNY','GBP','THB','SGD','VND','AUD'];
-const LANGS = [['Traditional Chinese (Taiwan)','繁體中文'],['English','English'],['Japanese','日本語']];
-const SPEECH = {ja:'ja-JP',ko:'ko-KR',zh:'zh-TW',th:'th-TH',fr:'fr-FR',it:'it-IT',es:'es-ES',de:'de-DE',en:'en-US',vi:'vi-VN',id:'id-ID',pt:'pt-PT',tr:'tr-TR'};
-let S = Object.assign({apiKey:'',model:'gemini-3.8-flash',currency:'TWD',lang:LANGS[0][0],allergens:[]}, load('ml_settings',{}));
-let H = load('ml_history', []);
-
-function renderSettings(){
-  $('#tab-settings').innerHTML = `
-  <h1>設定</h1>
-  <div class="card"><b>Gemini API Key</b>
-    <p class="sub">到 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 免費建立,貼在這裡。Key 只存在這支手機的瀏覽器裡。</p>
-    <input id="s_key" type="password" autocomplete="off" placeholder="AIza…" value="${esc(S.apiKey)}">
-    <p class="sub">模型</p><input id="s_model" type="text" value="${esc(S.model)}"></div>
-  <div class="card"><b>價格換算成</b><select id="s_cur">${CURRENCIES.map(c=>`<option ${c===S.currency?'selected':''}>${c}</option>`).join('')}</select>
-    <p><b>翻譯成</b></p><select id="s_lang">${LANGS.map(l=>`<option value="${l[0]}" ${l[0]===S.lang?'selected':''}>${l[1]}</option>`).join('')}</select></div>
-  <div class="card"><b>我的過敏原</b><div class="sub">勾選後,菜單會用紅字警示</div>
-    ${Object.entries(ALG).map(([k,v])=>`<label class="opt">${v}<input type="checkbox" data-alg="${k}" ${S.allergens.includes(k)?'checked':''}></label>`).join('')}</div>`;
-}
-document.addEventListener('change', e => {
-  const t = e.target;
-  if (t.id==='s_cur') S.currency=t.value;
-  else if (t.id==='s_lang') S.lang=t.value;
-  else if (t.dataset.alg) S.allergens = t.checked ? [...new Set([...S.allergens,t.dataset.alg])] : S.allergens.filter(a=>a!==t.dataset.alg);
-  else return;
-  save('ml_settings',S);
-});
-document.addEventListener('input', e => {
-  if (e.target.id==='s_key'){ S.apiKey=e.target.value.trim(); save('ml_settings',S); refreshNeedKey(); }
-  if (e.target.id==='s_model'){ S.model=e.target.value.trim()||'gemini-3.8-flash'; save('ml_settings',S); }
-  if (e.target.id==='search'){ q=e.target.value; renderMenu(); }
-});
-function refreshNeedKey(){ $('#needKey').classList.toggle('hidden', !!S.apiKey); }
+/* i18n:UI 內建 en / 繁中 / 日本語;菜單翻譯語言不限(由 Gemini 負責) */
+const T={en:{home:'Scan',hist:'History',set:'Settings',scan:'Scan menu',photo:'From photos',pdf:'From PDF',recent:'Recent menus',dishes:'dishes',search:'Search dishes',all:'All',add:'Add to order',show:'Show to waiter',what:"What is it?",ingr:'Main ingredients',nut:'Nutrition',est:'AI estimate',warn:'Possible allergens detected:',warn2:'Please confirm with the staff before ordering.',sim:'Similar dish · for reference',total:'Estimated total',done:'Done',turn:'Please turn the phone to your server',need:'Add your API key or server URL in Settings first.',busy:'Reading the menu…',fail:"Couldn't read the menu: ",none:'Nothing yet',del:'Delete',cart:'Order',pro:'Protein',carb:'Carbs',fat:'Fat',fib:'Fiber',uiL:'App language',tgt:'Translate into',cur:'Convert prices to',mine:'My allergens',key:'Gemini API key',model:'Model',proxy:'Server URL (optional)',disc:'Allergen and nutrition info is AI-generated and may be wrong. If you have a serious allergy, always check with the staff.'},
+zh:{home:'掃描',hist:'歷史',set:'設定',scan:'掃描菜單',photo:'從照片',pdf:'從 PDF',recent:'最近的菜單',dishes:'道菜',search:'搜尋菜品',all:'全部',add:'加入點餐',show:'展示給服務員',what:'這是什麼',ingr:'主要食材',nut:'營養',est:'AI 估算',warn:'偵測到可能的過敏原:',warn2:'點餐前請向店員確認。',sim:'相似菜色 · 僅供參考',total:'預估總價',done:'完成',turn:'請把手機轉向服務生',need:'請先到「設定」填入 API Key 或伺服器位址。',busy:'正在讀取菜單…',fail:'辨識失敗:',none:'還沒有紀錄',del:'刪除',cart:'點餐',pro:'蛋白質',carb:'碳水',fat:'脂肪',fib:'纖維',uiL:'介面語言',tgt:'翻譯成',cur:'價格換算成',mine:'我的過敏原',key:'Gemini API Key',model:'模型',proxy:'伺服器位址(選填)',disc:'過敏原與營養資訊由 AI 推測,可能有誤。若有嚴重過敏,請務必向店員確認。'},
+ja:{home:'スキャン',hist:'履歴',set:'設定',scan:'メニューをスキャン',photo:'写真から',pdf:'PDFから',recent:'最近のメニュー',dishes:'品',search:'料理を検索',all:'すべて',add:'注文に追加',show:'店員に見せる',what:'どんな料理?',ingr:'主な食材',nut:'栄養',est:'AI推定',warn:'アレルゲンの可能性:',warn2:'注文前に店員にご確認ください。',sim:'参考イメージ',total:'合計(目安)',done:'完了',turn:'スマホを店員さんに向けてください',need:'設定でAPIキーまたはサーバーURLを入力してください。',busy:'メニューを読み取り中…',fail:'読み取り失敗:',none:'履歴はありません',del:'削除',cart:'注文',pro:'たんぱく質',carb:'炭水化物',fat:'脂質',fib:'食物繊維',uiL:'表示言語',tgt:'翻訳先',cur:'換算通貨',mine:'自分のアレルゲン',key:'Gemini APIキー',model:'モデル',proxy:'サーバーURL(任意)',disc:'アレルゲン・栄養情報はAIの推定で誤りがある場合があります。重いアレルギーがある方は必ず店員にご確認ください。'}};
+const AK='gluten,crustaceans,eggs,fish,peanuts,soy,milk,treeNuts,celery,mustard,sesame,sulphites,lupin,molluscs'.split(',');
+const AL={en:'Gluten,Crustaceans,Eggs,Fish,Peanuts,Soy,Milk,Tree nuts,Celery,Mustard,Sesame,Sulphites,Lupin,Molluscs',zh:'麩質,甲殼類,蛋,魚,花生,大豆,乳製品,堅果,芹菜,芥末,芝麻,亞硫酸鹽,羽扇豆,軟體動物',ja:'グルテン,甲殻類,卵,魚,ピーナッツ,大豆,乳,木の実,セロリ,マスタード,ごま,亜硫酸塩,ルピナス,軟体動物'};
+const TG=[['English','English'],['Traditional Chinese','繁體中文'],['Simplified Chinese','简体中文'],['Japanese','日本語'],['Korean','한국어'],['Spanish','Español'],['French','Français'],['German','Deutsch'],['Italian','Italiano'],['Portuguese','Português'],['Russian','Русский'],['Thai','ไทย'],['Vietnamese','Tiếng Việt'],['Indonesian','Bahasa Indonesia'],['Arabic','العربية'],['Hindi','हिन्दी'],['Turkish','Türkçe'],['Dutch','Nederlands'],['Polish','Polski']];
+const L=(navigator.language||'en').toLowerCase(),o=ld('ml_settings',{}),RC={TW:'TWD',US:'USD',JP:'JPY',GB:'GBP',KR:'KRW',CN:'CNY',HK:'HKD',SG:'SGD',AU:'AUD',CA:'CAD',TH:'THB',VN:'VND',IN:'INR',MX:'MXN',BR:'BRL',CH:'CHF',DE:'EUR',FR:'EUR',ES:'EUR',IT:'EUR'};
+let S=Object.assign({ui:L.startsWith('zh')?'zh':L.startsWith('ja')?'ja':'en',tgt:L.startsWith('zh')?'Traditional Chinese':L.startsWith('ja')?'Japanese':'English',cur:o.currency||RC[(L.split('-')[1]||'').toUpperCase()]||'USD',alg:o.allergens||[],key:o.apiKey||'',model:'gemini-3.8-flash',proxy:''},ld('ml_s',{}));
+const t=k=>(T[S.ui]||T.en)[k]??T.en[k]??k,aname=k=>(AL[S.ui]||AL.en).split(',')[AK.indexOf(k)],tl=()=>(TG.find(x=>x[0]===S.tgt)||[0,S.tgt])[1];
+let H=ld('ml_history',[]),M=null,MID=0,rate=null,cat='',q='',TAB='scan';const C={cur:'',phrase:'',lines:[]};
 
 /* ---------- Gemini ---------- */
-const STR={type:'STRING'}, NUM={type:'NUMBER'};
-const SCHEMA = {type:'OBJECT',properties:{
-  restaurantName:STR, sourceLanguage:STR, currency:STR,
-  items:{type:'ARRAY',items:{type:'OBJECT',properties:{
-    originalName:STR, romanization:STR, translatedName:STR, category:STR, description:STR, priceOriginal:NUM,
-    mainIngredients:{type:'ARRAY',items:STR},
-    allergens:{type:'ARRAY',items:{type:'STRING',enum:Object.keys(ALG)}},
-    nutrition:{type:'OBJECT',properties:{kcal:NUM,proteinG:NUM,carbsG:NUM,fatG:NUM,fiberG:NUM}}
-  },required:['originalName','translatedName','category','description','mainIngredients','allergens']}}
-},required:['sourceLanguage','currency','items']};
+const STR={type:'STRING'},NUM={type:'NUMBER'};
+const SCH={type:'OBJECT',properties:{restaurantName:STR,cuisine:STR,sourceLanguage:STR,currency:STR,orderPhrase:STR,items:{type:'ARRAY',items:{type:'OBJECT',properties:{originalName:STR,romanization:STR,translatedName:STR,category:STR,description:STR,priceOriginal:NUM,emoji:STR,imageQuery:STR,mainIngredients:{type:'ARRAY',items:STR},allergens:{type:'ARRAY',items:{type:'STRING',enum:AK}},nutrition:{type:'OBJECT',properties:{kcal:NUM,proteinG:NUM,carbsG:NUM,fatG:NUM,fiberG:NUM}}},required:['originalName','translatedName','category','description','mainIngredients','allergens']}}},required:['sourceLanguage','currency','items']};
+const PROMPT=l=>`You are a menu-reading assistant for travelers. The attached image(s) are pages of ONE restaurant menu, in any language or script. Return JSON following the schema.
+- originalName: copy the dish name exactly as printed, character by character. Never translate or fix it.
+- translatedName, description, category, cuisine, mainIngredients: write in ${l}. description is 1-2 sentences. category = the menu's own section headings translated.
+- cuisine: short type of the restaurant/menu, e.g. "Ramen & izakaya".
+- romanization: Latin-letter pronunciation of originalName; omit if already Latin script.
+- priceOriginal: printed number only; omit if none. currency: ISO 4217 inferred from symbols/country. sourceLanguage: ISO 639-1.
+- orderPhrase: the polite phrase "I would like to order:" written in the menu's language and script.
+- emoji: one emoji that best represents the dish. imageQuery: generic English dish name for a Wikipedia lookup (e.g. "Shoyu ramen"), no restaurant-specific wording.
+- allergens: only allowed values the dish typically contains; if unsure include it (be conservative). nutrition: rough estimate for one serving.
+- Skip anything that is not a dish or drink.`;
+async function gem(imgs){
+  const body=JSON.stringify({contents:[{parts:[...imgs.map(d=>({inline_data:{mime_type:'image/jpeg',data:d}})),{text:PROMPT(S.tgt)}]}],generationConfig:{temperature:.2,responseMimeType:'application/json',responseSchema:SCH}});
+  const m=encodeURIComponent(S.model),r=await fetch(S.proxy?S.proxy+(S.proxy.includes('?')?'&':'?')+'model='+m:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:S.proxy?{'Content-Type':'application/json'}:{'Content-Type':'application/json','x-goog-api-key':S.key},body});
+  if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,300));
+  const j=await r.json(),x=(j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').replace(/^```json\s*|```\s*$/g,'').trim();
+  if(!x)throw new Error('empty response');
+  const m2=JSON.parse(x);m2.items=(m2.items||[]).filter(i=>i&&i.originalName).map(i=>({...i,mainIngredients:i.mainIngredients||[],allergens:(i.allergens||[]).filter(a=>AK.includes(a))}));
+  if(!m2.items.length)throw new Error('no dishes found');return m2}
+const shr=(c,max)=>{const s=Math.min(1,max/Math.max(c.width,c.height)),o=$d.createElement('canvas');o.width=Math.round(c.width*s);o.height=Math.round(c.height*s);o.getContext('2d').drawImage(c,0,0,o.width,o.height);return o};
+const b64=c=>shr(c,1800).toDataURL('image/jpeg',.85).split(',')[1];
+const imgCv=f=>new Promise((res,rej)=>{const u=URL.createObjectURL(f),i=new Image();i.onload=()=>{const s=Math.min(1,2200/Math.max(i.width,i.height)),c=$d.createElement('canvas');c.width=Math.round(i.width*s);c.height=Math.round(i.height*s);c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c)};i.onerror=()=>rej(new Error('bad image'));i.src=u});
+async function pdfCv(f){const V='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  if(!window.pdfjsLib){await new Promise((r,j)=>{const s=$d.createElement('script');s.src=V+'pdf.min.js';s.onload=r;s.onerror=()=>j(new Error('PDF library failed to load'));$d.head.append(s)});pdfjsLib.GlobalWorkerOptions.workerSrc=V+'pdf.worker.min.js'}
+  const d=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise,out=[];
+  for(let n=1;n<=Math.min(d.numPages,4);n++){const p=await d.getPage(n),v0=p.getViewport({scale:1}),v=p.getViewport({scale:2000/Math.max(v0.width,v0.height)}),c=$d.createElement('canvas');c.width=v.width;c.height=v.height;await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;out.push(c)}return out}
+async function run(files,isPdf){
+  hide('#err');if(!S.key&&!S.proxy){tab('set');return toast(t('need'))}
+  $('#bt').textContent=t('busy');show('#busy');
+  try{const cv=isPdf?await pdfCv(files[0]):await Promise.all([...files].slice(0,6).map(imgCv));
+    const m=await gem(cv.map(b64)),id=Date.now();let th='';try{th=shr(cv[0],110).toDataURL('image/jpeg',.6)}catch{}
+    H.unshift({id,thumb:th,menu:m});H=H.slice(0,30);sv('ml_history',H);openMenu(m,id);home()}
+  catch(e){const el=$('#err');if(el){el.textContent=t('fail')+e.message;show('#err')}else toast(t('fail')+e.message)}
+  finally{hide('#busy')}}
+$d.addEventListener('change',e=>{const i=e.target,id=i.id;
+  if(id==='f1'||id==='f2'||id==='f3'){const f=[...i.files];i.value='';if(f.length)run(f,id==='f3')}
+  else if(id==='sui'){S.ui=i.value;sv('ml_s',S);all()}else if(id==='stg')S.tgt=i.value;else if(id==='scur'){S.cur=i.value}
+  else if(i.dataset.alg)S.alg=i.checked?[...new Set([...S.alg,i.dataset.alg])]:S.alg.filter(a=>a!==i.dataset.alg);else return;sv('ml_s',S)});
+$d.addEventListener('input',e=>{const i=e.target;if(i.id==='skey')S.key=i.value.trim();else if(i.id==='smod')S.model=i.value.trim()||'gemini-3.8-flash';else if(i.id==='sprx')S.proxy=i.value.trim();else if(i.id==='q'){q=i.value;return mlist()}else return;sv('ml_s',S)});
 
-const prompt = lang => `You are a menu-reading assistant for travelers. Read the attached restaurant menu photo and return JSON that follows the schema.
-Rules:
-- originalName: copy the dish name exactly as printed, character by character. Never translate or "fix" it.
-- translatedName and description: write in ${lang}. description is 1-2 sentences explaining what the dish is.
-- romanization: pronunciation of originalName in Latin letters (romaji, pinyin, RTGS...). Omit if the menu is already in Latin script.
-- priceOriginal: the number printed on the menu, no currency symbol. Omit if there is no price.
-- currency: ISO 4217 code inferred from the symbols or the country.
-- sourceLanguage: ISO 639-1 code of the menu language.
-- category: use the menu's own section headings, translated to ${lang}.
-- mainIngredients: 3-6 typical ingredients, in ${lang}.
-- allergens: only values from the allowed list that this dish typically contains. If unsure, include it (be conservative).
-- nutrition: rough estimate for one serving.
-- Skip anything that is not a dish or drink (address, phone number, notes).`;
-
-function toJpegBase64(file, max=2048){
-  return new Promise((res,rej)=>{
-    const url=URL.createObjectURL(file), img=new Image();
-    img.onload=()=>{
-      const sc=Math.min(1,max/Math.max(img.width,img.height)), c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',.85).split(',')[1]);
-    };
-    img.onerror=()=>rej(new Error('無法讀取這張圖片')); img.src=url;
-  });
-}
-
-async function scanImage(file){
-  const data = await toJpegBase64(file);
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model)}:generateContent`, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
-    body: JSON.stringify({
-      contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data}},{text:prompt(S.lang)}]}],
-      generationConfig:{temperature:0.2,responseMimeType:'application/json',responseSchema:SCHEMA}
-    })
-  });
-  if(!res.ok) throw new Error(`Gemini API 錯誤 ${res.status}\n${(await res.text()).slice(0,400)}`);
-  const j = await res.json();
-  const text = (j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('')
-    .replace(/^```json\s*|```\s*$/g,'').trim();
-  if(!text) throw new Error('AI 沒有回傳內容(可能被安全機制擋下),請換一張照片再試。');
-  const m = JSON.parse(text);
-  m.items = (m.items||[]).filter(i=>i&&i.originalName).map(i=>({...i,mainIngredients:i.mainIngredients||[],allergens:(i.allergens||[]).filter(a=>ALG[a])}));
-  if(!m.items.length) throw new Error('沒有辨識到菜色,請拍得更清楚一點。');
-  return m;
-}
-
-async function onFile(e){
-  const f=e.target.files[0]; e.target.value=''; if(!f) return;
-  hide('#err');
-  if(!S.apiKey){ switchTab('settings'); toast('請先貼上 Gemini API Key'); return; }
-  show('#busy');
-  try{
-    const m=await scanImage(f), id=Date.now();
-    H.unshift({id,menu:m}); H=H.slice(0,30); save('ml_history',H); renderHistory();
-    openMenu(m,id);
-  }catch(err){ $('#err').textContent='辨識失敗:'+err.message; show('#err'); }
-  finally{ hide('#busy'); }
-}
-$('#fileCam').addEventListener('change',onFile);
-$('#fileLib').addEventListener('change',onFile);
-
-/* ---------- 匯率 ---------- */
-async function getRate(from,to){
-  if(!from||!to) return null; if(from===to) return 1;
-  let c=load('ml_rates',null);
-  if(!c||Date.now()-c.t>864e5){
-    try{ const j=await (await fetch('https://open.er-api.com/v6/latest/USD')).json(); if(j.rates){ c={t:Date.now(),rates:j.rates}; save('ml_rates',c); } }catch{}
-  }
-  const f=c?.rates?.[from], t=c?.rates?.[to];
-  return f&&t ? t/f : null;
-}
-const money=(v,cur)=>{ try{ return new Intl.NumberFormat('zh-TW',{style:'currency',currency:cur}).format(v) }catch{ return `${v} ${cur}` } };
+/* ---------- 匯率 / 圖片 ---------- */
+async function getRate(a,b){if(!a||!b)return null;if(a===b)return 1;let c=ld('ml_rates',null);
+  if(!c||Date.now()-c.t>864e5){try{const j=await(await fetch('https://open.er-api.com/v6/latest/USD')).json();if(j.rates){c={t:Date.now(),rates:j.rates};sv('ml_rates',c)}}catch{}}
+  const f=c?.rates?.[a],g=c?.rates?.[b];return f&&g?g/f:null}
+const IMG=ld('ml_img',{});
+async function dishImg(k){if(!k)return null;if(k in IMG)return IMG[k]||null;
+  try{const j=await(await fetch('https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(k)+'&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=500&format=json&origin=*')).json();IMG[k]=Object.values(j.query?.pages||{})[0]?.thumbnail?.source||''}catch{return null}
+  sv('ml_img',IMG);return IMG[k]||null}
+const hyd=sel=>$d.querySelectorAll(sel+' .ph[data-q]').forEach(el=>dishImg(el.dataset.q).then(u=>{if(u){el.style.backgroundImage=`url("${u}")`;el.firstChild.nodeValue=''}}));
 
 /* ---------- 菜單 ---------- */
-let menu=null, menuId=null, rate=null, cat=null, q='';
-const cart={currency:'',lines:[]};
-const hitsOf = it => it.allergens.filter(a=>S.allergens.includes(a));
-const priceText = it => {
-  if(it.priceOriginal==null) return '';
-  const o=money(it.priceOriginal,menu.currency);
-  return (!rate||menu.currency===S.currency) ? o : `${money(it.priceOriginal*rate,S.currency)}(${o})`;
-};
-
-async function openMenu(m,id){
-  menu=m; menuId=id; cat=null; q=''; rate=null; $('#search').value='';
-  $('#menuTitle').textContent=m.restaurantName||'菜單';
-  renderMenu(); updateCartBtn(); show('#menuScreen'); $('#menuScreen').scrollTop=0;
-  rate=await getRate(m.currency,S.currency); renderMenu();
-}
-function renderMenu(){
-  if(!menu) return;
-  const cats=[...new Set(menu.items.map(i=>i.category))];
-  $('#chips').innerHTML=[`<span class="chip ${cat==null?'on':''}" data-act="cat" data-c="">全部</span>`,
-    ...cats.map(c=>`<span class="chip ${cat===c?'on':''}" data-act="cat" data-c="${esc(c)}">${esc(c)}</span>`)].join('');
+const mon=(v,c)=>{try{return new Intl.NumberFormat(S.ui==='zh'?'zh-TW':S.ui,{style:'currency',currency:c}).format(v)}catch{return v+' '+c}};
+const conv=()=>rate&&M.currency!==S.cur;
+const pt=i=>i.priceOriginal==null?'':conv()?mon(i.priceOriginal*rate,S.cur):mon(i.priceOriginal,M.currency),po=i=>i.priceOriginal!=null&&conv()?mon(i.priceOriginal,M.currency):'';
+const mine=i=>i.allergens.filter(a=>S.alg.includes(a));
+const chip=(k,r)=>`<span class="ch ${r?'r':''}"><i style="background:${r?'#dc2626':`hsl(${AK.indexOf(k)*27} 75% 50%)`}"></i>${esc(aname(k))}</span>`;
+const chips=i=>{const m=mine(i),a=[...m,...i.allergens.filter(x=>!m.includes(x))];return a.slice(0,3).map(k=>chip(k,m.includes(k))).join('')+(a.length>3?`<small>+${a.length-3}</small>`:'')};
+const card=(i,n)=>`<div class="it" data-a="open" data-i="${n}"><div class="tx"><b>${esc(i.translatedName)}</b><div class="sub">${esc([i.originalName,i.romanization].filter(Boolean).join(' · '))}</div><p>${esc(i.description)}</p><div class="pr"><b>${esc(pt(i))}</b><small>${esc(po(i))}</small>${chips(i)}</div></div><div class="ph" data-q="${esc(i.imageQuery||'')}">${esc(i.emoji||'🍽')}<button class="pl" data-a="add" data-i="${n}">+</button></div></div>`;
+const cnt=()=>C.lines.reduce((s,l)=>s+l.qty,0);
+function openMenu(m,id){M=m;MID=id;cat='';q='';rate=null;
+  $('#menu').innerHTML=`<div class="bar"><button data-a="cm">‹</button><div class="tt"><b>${esc(m.restaurantName||m.cuisine||'')}</b><small>${esc(m.restaurantName?m.cuisine||'':'')}</small></div><button data-a="ord" id="ob"></button></div><div class="pd"><input id="q" type="search" placeholder="${esc(t('search'))}"><div id="tabs" class="tabs"></div><div id="ml"></div><p class="sub">${t('disc')}</p></div>`;
+  ob();show('#menu');mlist();getRate(m.currency,S.cur).then(r=>{rate=r;if(M===m)mlist()})}
+const ob=()=>{const b=$('#ob');if(b)b.innerHTML=`<small style="color:var(--pri)">${t('cart')}</small> ${cnt()}`};
+function mlist(){const cs=[...new Set(M.items.map(i=>i.category))];
+  $('#tabs').innerHTML=[['',t('all'),M.items.length],...cs.map(c=>[c,c,M.items.filter(i=>i.category===c).length])].map(([c,n,k])=>`<span class="tb ${cat===c?'on':''}" data-a="cat" data-c="${esc(c)}">${esc(n)} <small>${k}</small></span>`).join('');
   const ql=q.trim().toLowerCase();
-  $('#list').innerHTML=menu.items.map((it,i)=>({it,i})).filter(({it})=>
-    (cat==null||it.category===cat)&&(!ql||(it.translatedName+' '+it.originalName+' '+(it.romanization||'')).toLowerCase().includes(ql))
-  ).map(({it,i})=>{
-    const h=hitsOf(it);
-    return `<div class="row" data-act="open" data-i="${i}"><div class="name">${esc(it.translatedName)}</div>
-      <div class="sub">${esc([it.originalName,it.romanization].filter(Boolean).join(' · '))}</div>
-      <div class="price">${esc(priceText(it))}</div>
-      ${h.length?`<div class="tag">⚠️ 可能含:${esc(h.map(a=>ALG[a]).join('、'))}</div>`:''}</div>`;
-  }).join('')||'<p class="sub">沒有符合的菜色</p>';
-}
-function openDetail(i){
-  const it=menu.items[i], h=hitsOf(it), n=it.nutrition;
-  $('#detail').innerHTML=`
-  <div class="topbar"><button data-act="closeDetail">‹ 返回</button><div></div><button data-act="speak" data-i="${i}">🔊 發音</button></div>
-  <div class="pad">
-    <h1>${esc(it.translatedName)}</h1><div class="orig">${esc(it.originalName)}</div>
-    ${it.romanization?`<div class="sub">${esc(it.romanization)}</div>`:''}
-    <div class="price">${esc(priceText(it))}</div>
-    ${h.length?`<div class="warn">⚠️ 偵測到可能的過敏原:${esc(h.map(a=>ALG[a]).join('、'))}。點餐前請再向店員確認。</div>`:''}
-    <h3>這是什麼</h3><p>${esc(it.description)}</p>
-    <h3>主要食材</h3><p>${esc(it.mainIngredients.join('、'))}</p>
-    ${it.allergens.length?`<h3>可能含有的過敏原</h3><p>${esc(it.allergens.map(a=>ALG[a]).join('、'))}</p>`:''}
-    ${n&&n.kcal!=null?`<h3>營養(AI 估算,僅供參考)</h3><div class="nut">
-      <div><b>${Math.round(n.kcal)}</b>kcal</div><div><b>${Math.round(n.proteinG||0)}g</b>蛋白質</div>
-      <div><b>${Math.round(n.carbsG||0)}g</b>碳水</div><div><b>${Math.round(n.fatG||0)}g</b>脂肪</div><div><b>${Math.round(n.fiberG||0)}g</b>纖維</div></div>`:''}
-  </div>
-  <div class="bottombar"><button class="primary" data-act="add" data-i="${i}">＋ 加入點餐</button></div>`;
-  show('#detail'); $('#detail').scrollTop=0;
-}
-function speak(text,lang){
-  if(!('speechSynthesis' in window)) return toast('此瀏覽器不支援語音');
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang=SPEECH[(lang||'').slice(0,2).toLowerCase()]||lang||'en-US'; u.rate=.9;
-  const v=speechSynthesis.getVoices().find(v=>v.lang.replace('_','-')===u.lang); if(v) u.voice=v;
-  speechSynthesis.speak(u);
-}
+  $('#ml').innerHTML=M.items.map((i,n)=>[i,n]).filter(([i])=>(!cat||i.category===cat)&&(!ql||(i.translatedName+i.originalName+(i.romanization||'')).toLowerCase().includes(ql))).map(([i,n])=>card(i,n)).join('');hyd('#ml')}
+const nutv=n=>{const p=n.proteinG||0,c=n.carbsG||0,f=n.fatG||0,s=p+c+f||1,w=x=>(x/s*100).toFixed(1)+'%',m=(col,l,v)=>`<span><i style="background:${col}"></i> ${l}<b>${Math.round(v)} g</b></span>`;
+  return `<h4>${t('nut')} <small>${t('est')}</small></h4><div class="card"><div class="kc"><b>${Math.round(n.kcal)}</b> kcal</div><div class="sb"><i style="width:${w(p)};background:#3b82f6"></i><i style="width:${w(c)};background:#f59e0b"></i><i style="width:${w(f)};background:#ef4444"></i></div><div class="mc">${m('#3b82f6',t('pro'),p)}${m('#f59e0b',t('carb'),c)}${m('#ef4444',t('fat'),f)}${m('#22c55e',t('fib'),n.fiberG||0)}</div></div>`};
+function det(n){const i=M.items[n],m=mine(i);
+  $('#det').innerHTML=`<div class="hero"><span class="em">${esc(i.emoji||'🍽')}</span><button class="x" data-a="cd">✕</button><small class="bd hid">${t('sim')}</small></div><div class="pd up"><div class="rw"><h2>${esc(i.translatedName)}</h2><b class="pc">${esc(pt(i))}</b></div><div class="rw"><div><div class="og">${esc(i.originalName)}</div><div class="sub">${esc(i.romanization||'')}</div></div><button class="sp" data-a="say" data-i="${n}">🔊</button></div>${m.length?`<div class="wn">⚠️ <b>${t('warn')}</b> ${esc(m.map(aname).join(', '))}. ${t('warn2')}</div>`:''}<h4>${t('what')}</h4><div>${esc(i.description)}</div><h4>${t('ingr')}</h4><div class="ls">${i.mainIngredients.map(x=>`<div>${esc(x)}</div>`).join('')}</div>${i.allergens.length?`<div class="chs">${i.allergens.map(k=>chip(k,m.includes(k))).join('')}</div>`:''}${i.nutrition&&i.nutrition.kcal!=null?nutv(i.nutrition):''}</div><div class="bb"><button class="btn" data-a="add" data-i="${n}">＋ ${t('add')}</button><button class="btn pri" data-a="ord">${t('show')}</button></div>`;
+  show('#det');$('#det').scrollTop=0;const h=$('#det .hero');dishImg(i.imageQuery).then(u=>{if(u){h.style.backgroundImage=`url("${u}")`;h.querySelector('.em').remove();h.querySelector('.bd').classList.remove('hid')}})}
+const LC={ja:'ja-JP',ko:'ko-KR',zh:'zh-TW',th:'th-TH',fr:'fr-FR',it:'it-IT',es:'es-ES',de:'de-DE',en:'en-US',vi:'vi-VN',id:'id-ID',pt:'pt-PT',ru:'ru-RU',tr:'tr-TR',ar:'ar-SA',hi:'hi-IN',nl:'nl-NL',pl:'pl-PL'};
+function say(x){if(!('speechSynthesis' in window))return toast('No speech');speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(x);const l=(M.sourceLanguage||'en').slice(0,2).toLowerCase();u.lang=LC[l]||l;u.rate=.9;speechSynthesis.speak(u)}
+function add(n){if(C.cur!==M.currency){C.lines=[];C.cur=M.currency}C.phrase=M.orderPhrase||'';const k=MID+':'+n,l=C.lines.find(l=>l.k===k);l?l.qty++:C.lines.push({k,i:M.items[n],qty:1});ob();toast('＋1')}
+function wait(){const tot=C.lines.reduce((s,l)=>s+(l.i.priceOriginal||0)*l.qty,0);
+  $('#wait').innerHTML=`<div class="bar pri"><button data-a="cw">✕</button><div class="tt"><b>${t('turn')}</b></div><span></span></div><div class="pd" style="padding-bottom:150px"><h2 class="big">${esc(C.phrase||'I would like to order:')}</h2>${C.lines.map(l=>`<div class="wl"><div><b>${esc(l.i.originalName)}</b><small>${esc([l.i.romanization,l.i.translatedName].filter(Boolean).join(' · '))}</small></div><div class="qty"><button data-a="qty" data-k="${esc(l.k)}" data-d="-1">−</button>×${l.qty}<button data-a="qty" data-k="${esc(l.k)}" data-d="1">+</button></div></div>`).join('')}</div><div class="bb"><div class="rw"><span class="sub">${t('total')}</span><b>${esc(mon(tot,C.cur||'USD'))}</b></div><button class="btn dk" data-a="cw">${t('done')}</button></div>`;show('#wait')}
 
-/* ---------- 點餐 / 給服務生看 ---------- */
-function updateCartBtn(){ $('#orderBtn').textContent='點餐 '+cart.lines.reduce((s,l)=>s+l.qty,0); }
-function addToCart(i){
-  if(cart.currency!==menu.currency){ cart.lines=[]; cart.currency=menu.currency; }
-  const key=menuId+':'+i, l=cart.lines.find(l=>l.key===key);
-  if(l) l.qty++; else cart.lines.push({key,item:menu.items[i],qty:1});
-  updateCartBtn(); toast('已加入點餐');
-}
-function renderWaiter(){
-  const total=cart.lines.reduce((s,l)=>s+(l.item.priceOriginal||0)*l.qty,0);
-  $('#waiter').innerHTML=`<div class="topbar"><button data-act="closeWaiter">完成</button><div>給服務生看</div><div></div></div>
-  <div class="pad"><div class="sub">我想點 / I'd like to order</div>
-  ${cart.lines.map(l=>`<div class="wline"><div><div class="big">${esc(l.item.originalName)}</div>
-    ${l.item.romanization?`<div class="sub">${esc(l.item.romanization)}</div>`:''}</div>
-    <div class="qty"><button data-act="qty" data-key="${esc(l.key)}" data-d="-1">−</button><b>×${l.qty}</b><button data-act="qty" data-key="${esc(l.key)}" data-d="1">＋</button></div></div>`).join('')||'<p class="sub">尚未點餐</p>'}
-  ${cart.lines.length?`<div class="total"><span>預估總價</span><b>${esc(money(total,cart.currency))}</b></div>`:''}</div>`;
-}
-
-/* ---------- 歷史 ---------- */
-function renderHistory(){
-  $('#tab-history').innerHTML='<h1>歷史</h1>'+(H.length?H.map(h=>`<div class="row" data-act="hist" data-id="${h.id}">
-    <div class="name">${esc(h.menu.restaurantName||'未命名菜單')}</div>
-    <div class="sub">${h.menu.items.length} 道菜 · ${new Date(h.id).toLocaleDateString('zh-TW')}
-    <span style="float:right;color:var(--red)" data-act="del" data-id="${h.id}">刪除</span></div></div>`).join(''):'<p class="sub">還沒有紀錄</p>');
-}
-
-/* ---------- 事件 ---------- */
-function switchTab(t){
-  document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id==='tab-'+t));
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
-  if(t==='settings') renderSettings(); if(t==='history') renderHistory(); window.scrollTo(0,0);
-}
-document.addEventListener('click',e=>{
-  const nb=e.target.closest('nav button'); if(nb) return switchTab(nb.dataset.tab);
-  const b=e.target.closest('[data-act]'); if(!b) return;
-  const a=b.dataset.act, i=+b.dataset.i;
-  if(a==='del'){ e.stopPropagation(); if(confirm('刪除這筆紀錄?')){ H=H.filter(h=>String(h.id)!==b.dataset.id); save('ml_history',H); renderHistory(); } }
-  else if(a==='hist'){ const h=H.find(h=>String(h.id)===b.dataset.id); if(h) openMenu(h.menu,h.id); }
-  else if(a==='closeMenu') hide('#menuScreen');
-  else if(a==='cat'){ cat=b.dataset.c||null; renderMenu(); }
-  else if(a==='open') openDetail(i);
-  else if(a==='closeDetail') hide('#detail');
-  else if(a==='speak') speak(menu.items[i].originalName,menu.sourceLanguage);
-  else if(a==='add') addToCart(i);
-  else if(a==='order'){ renderWaiter(); show('#waiter'); }
-  else if(a==='closeWaiter') hide('#waiter');
-  else if(a==='qty'){ const l=cart.lines.find(l=>l.key===b.dataset.key); if(l){ l.qty+=+b.dataset.d; if(l.qty<=0) cart.lines=cart.lines.filter(x=>x!==l); updateCartBtn(); renderWaiter(); } }
-});
-
-refreshNeedKey(); renderSettings(); renderHistory();
-if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')) navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script>
-</body>
-</html>
+/* ---------- 主畫面 / 歷史 / 設定 ---------- */
+const hrow=h=>`<div class="hr" data-a="hist" data-id="${h.id}"><div class="th" style="background-image:url('${h.thumb||''}')">${h.thumb?'':'🍽'}</div><div><b>${esc(h.menu.restaurantName||h.menu.cuisine||'—')}</b><div class="sub">${esc((h.menu.sourceLanguage||'').toUpperCase())} · ${h.menu.items.length} ${t('dishes')} · ${new Date(h.id).toLocaleDateString(S.ui==='zh'?'zh-TW':S.ui)}</div></div><small data-a="del" data-id="${h.id}">${t('del')}</small></div>`;
+function home(){$('#t-scan').innerHTML=`<b style="font-size:1.2rem;color:var(--pri)">🍽 MenuLens</b>${S.key||S.proxy?'':`<div class="card">${t('need')}</div>`}<label class="scan"><span class="cam">📷</span><div><b>${t('scan')}</b><small>${esc(tl())} · ${S.cur}</small></div><input id="f1" type="file" accept="image/*" capture="environment" hidden></label><div class="two"><label class="btn">🖼 ${t('photo')}<input id="f2" type="file" accept="image/*" multiple hidden></label><label class="btn">📄 ${t('pdf')}<input id="f3" type="file" accept="application/pdf" hidden></label></div><div id="err" class="err hid"></div><h3>${t('recent')}</h3>${H.length?H.slice(0,4).map(hrow).join(''):`<p class="sub">${t('none')}</p>`}`}
+const histv=()=>{$('#t-hist').innerHTML=`<h2>${t('hist')}</h2>${H.length?H.map(hrow).join(''):`<p class="sub">${t('none')}</p>`}`};
+function setv(){let dn;try{dn=new Intl.DisplayNames([S.ui==='zh'?'zh-TW':S.ui],{type:'currency'})}catch{}
+  const cs=Intl.supportedValuesOf?Intl.supportedValuesOf('currency'):['USD','EUR','JPY','GBP','TWD','KRW','CNY','HKD','THB','SGD','AUD','CAD'];
+  $('#t-set').innerHTML=`<h2>${t('set')}</h2><label class="f">${t('uiL')}</label><select id="sui">${[['en','English'],['zh','繁體中文'],['ja','日本語']].map(([k,n])=>`<option value="${k}" ${k===S.ui?'selected':''}>${n}</option>`).join('')}</select>
+<label class="f">${t('tgt')}</label><select id="stg">${TG.map(([k,n])=>`<option value="${k}" ${k===S.tgt?'selected':''}>${n}</option>`).join('')}</select>
+<label class="f">${t('cur')}</label><select id="scur">${cs.map(c=>`<option value="${c}" ${c===S.cur?'selected':''}>${c}${dn?' · '+esc(dn.of(c)||''):''}</option>`).join('')}</select>
+<label class="f">${t('mine')}</label><div class="card">${AK.map(k=>`<label class="ao">${esc(aname(k))}<input type="checkbox" data-alg="${k}" ${S.alg.includes(k)?'checked':''}></label>`).join('')}</div>
+<label class="f">${t('key')}</label><input id="skey" type="password" autocomplete="off" placeholder="AIza…" value="${esc(S.key)}"><small>aistudio.google.com/apikey</small>
+<label class="f">${t('model')}</label><input id="smod" type="text" value="${esc(S.model)}"><label class="f">${t('proxy')}</label><input id="sprx" type="text" placeholder="https://…workers.dev" value="${esc(S.proxy)}">`}
+const nav=()=>{$('#nav').innerHTML=[['scan','📷',t('home')],['hist','🕘',t('hist')],['set','⚙️',t('set')]].map(([k,e,l])=>`<button data-t="${k}" class="${TAB===k?'on':''}">${e}<small>${l}</small></button>`).join('')};
+function tab(k){TAB=k;$d.querySelectorAll('.tab').forEach(s=>s.classList.toggle('on',s.id==='t-'+k));nav();({scan:home,hist:histv,set:setv})[k]();scrollTo(0,0)}
+const all=()=>{nav();home();histv();setv();$d.documentElement.lang=S.ui};
+$d.addEventListener('click',e=>{const nb=e.target.closest('nav button');if(nb)return tab(nb.dataset.t);
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,n=+b.dataset.i;
+  if(a==='del'){e.stopPropagation();H=H.filter(h=>String(h.id)!==b.dataset.id);sv('ml_history',H);home();histv()}
+  else if(a==='hist'){const h=H.find(h=>String(h.id)===b.dataset.id);if(h)openMenu(h.menu,h.id)}
+  else if(a==='cm')hide('#menu');else if(a==='cat'){cat=b.dataset.c;mlist()}else if(a==='open')det(n);else if(a==='cd')hide('#det');
+  else if(a==='say')say(M.items[n].originalName);else if(a==='add')add(n);else if(a==='ord')wait();else if(a==='cw')hide('#wait');
+  else if(a==='qty'){const l=C.lines.find(l=>l.k===b.dataset.k);if(l){l.qty+=+b.dataset.d;if(l.qty<=0)C.lines=C.lines.filter(x=>x!==l);ob();wait()}}});
+all();if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
