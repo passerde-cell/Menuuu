@@ -1,0 +1,9 @@
+{
+  "name": "MenuLens 菜單翻譯",
+  "short_name": "MenuLens",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f766e",
+  "theme_color": "#0f766e",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MenuLens">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<title>MenuLens 菜單翻譯</title>
+<style>
+:root{--bg:#f4f6f7;--card:#fff;--text:#111827;--sub:#6b7280;--teal:#0f766e;--onteal:#fff;--line:#e5e7eb;--red:#b91c1c;--redbg:#fee2e2}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1214;--card:#1a1f23;--text:#f3f4f6;--sub:#9ca3af;--teal:#2dd4bf;--onteal:#042f2e;--line:#2b3137;--red:#fca5a5;--redbg:#3b1416}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif}
+button,input,select{font:inherit;color:inherit}
+.hidden{display:none!important}
+.pad{padding:16px}
+.sub{color:var(--sub);font-size:.875rem}
+h1{margin:.2em 0;font-size:1.6rem}h3{margin:1.2em 0 .2em}
+.tab{display:none;padding:calc(16px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom))}
+.tab.active{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;background:none;border:0;padding:10px 0;color:var(--sub)}
+nav button.on{color:var(--teal);font-weight:700}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);text-align:center;margin:10px 0;cursor:pointer}
+.btn.primary,button.primary{background:var(--teal);color:var(--onteal);border-color:var(--teal);font-weight:700}
+.hero{text-align:center;margin:36px 0 18px}.hero .logo{font-size:64px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.err{color:var(--red);background:var(--redbg);padding:10px 12px;border-radius:10px;white-space:pre-wrap;font-size:.875rem}
+.screen{position:fixed;inset:0;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+#menuScreen{z-index:10}#detail{z-index:20}#waiter{z-index:30}
+.topbar{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:90px 1fr 90px;align-items:center;gap:6px;background:var(--card);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 10px 8px;text-align:center;font-weight:700}
+.topbar button{background:none;border:0;color:var(--teal);padding:6px;font-weight:600}
+.topbar button:first-child{text-align:left}.topbar button:last-child{text-align:right}
+.topbar div{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+input[type=search],input[type=text],input[type=password],select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0}
+.chip{white-space:nowrap;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.chip.on{background:var(--teal);color:var(--onteal);border-color:var(--teal)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer}
+.row .name{font-weight:700;font-size:1.05rem}
+.price{color:var(--teal);font-weight:700}
+.tag{color:var(--red);font-size:.8125rem;margin-top:2px}
+.warn{background:var(--redbg);color:var(--red);padding:12px;border-radius:12px;margin:12px 0}
+.orig{font-size:1.25rem}
+.nut{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;gap:4px}.nut b{display:block}
+.bottombar{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.bottombar button{width:100%;padding:14px;border-radius:12px;border:0}
+.wline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.big{font-size:1.6rem;font-weight:800}
+.qty{display:flex;align-items:center;gap:12px;font-size:1.4rem}
+.qty button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:1.3rem}
+.total{display:flex;justify-content:space-between;font-size:1.2rem;padding:16px 0}
+label.opt{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+#busy{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px}
+.spin{width:38px;height:38px;border:4px solid #fff5;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111c;color:#fff;padding:8px 14px;border-radius:99px;z-index:60;font-size:.875rem}
+</style>
+</head>
+<body>
+
+<section id="tab-scan" class="tab active">
+  <div class="hero"><div class="logo">🍜</div><h1>拍下菜單,馬上看懂</h1><div class="sub">翻譯 · 過敏原 · 價格換算</div></div>
+  <div id="needKey" class="card hidden">還沒設定 Gemini API Key。請到「設定」貼上(免費申請)。</div>
+  <label class="btn primary">📷 掃描菜單<input id="fileCam" type="file" accept="image/*" capture="environment" hidden></label>
+  <label class="btn">🖼 從相簿選擇<input id="fileLib" type="file" accept="image/*" hidden></label>
+  <div id="err" class="err hidden"></div>
+</section>
+<section id="tab-history" class="tab"></section>
+<section id="tab-settings" class="tab"></section>
+
+<nav>
+  <button data-tab="scan" class="on">📷<br><small>掃描</small></button>
+  <button data-tab="history">🕘<br><small>歷史</small></button>
+  <button data-tab="settings">⚙️<br><small>設定</small></button>
+</nav>
+
+<div id="menuScreen" class="screen hidden">
+  <div class="topbar"><button data-act="closeMenu">‹ 返回</button><div id="menuTitle"></div><button data-act="order" id="orderBtn">點餐 0</button></div>
+  <div class="pad"><input id="search" type="search" placeholder="搜尋菜品"><div id="chips" class="chips"></div><div id="list"></div>
+  <p class="sub">過敏原與營養資訊由 AI 推測,可能有誤。若有嚴重過敏,請務必向店員確認。</p></div>
+</div>
+<div id="detail" class="screen hidden"></div>
+<div id="waiter" class="screen hidden"></div>
+<div id="busy" class="hidden"><div class="spin"></div><div>正在翻譯菜單…</div></div>
+<div id="toast" class="hidden"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch { toast('儲存失敗(空間不足?)') } };
+const show = s => $(s).classList.remove('hidden');
+const hide = s => $(s).classList.add('hidden');
+let toastT; function toast(t){ const el=$('#toast'); el.textContent=t; show('#toast'); clearTimeout(toastT); toastT=setTimeout(()=>hide('#toast'),1800); }
+
+/* ---------- 設定 ---------- */
+const ALG = {gluten:'麩質',crustaceans:'甲殼類',eggs:'蛋',fish:'魚',peanuts:'花生',soy:'大豆',milk:'乳製品',treeNuts:'堅果',celery:'芹菜',mustard:'芥末',sesame:'芝麻',sulphites:'亞硫酸鹽',lupin:'羽扇豆',molluscs:'軟體動物'};
+const CURRENCIES = ['TWD','USD','JPY','EUR','KRW','HKD','CNY','GBP','THB','SGD','VND','AUD'];
+const LANGS = [['Traditional Chinese (Taiwan)','繁體中文'],['English','English'],['Japanese','日本語']];
+const SPEECH = {ja:'ja-JP',ko:'ko-KR',zh:'zh-TW',th:'th-TH',fr:'fr-FR',it:'it-IT',es:'es-ES',de:'de-DE',en:'en-US',vi:'vi-VN',id:'id-ID',pt:'pt-PT',tr:'tr-TR'};
+let S = Object.assign({apiKey:'',model:'gemini-3.5-flash',currency:'TWD',lang:LANGS[0][0],allergens:[]}, load('ml_settings',{}));
+let H = load('ml_history', []);
+
+function renderSettings(){
+  $('#tab-settings').innerHTML = `
+  <h1>設定</h1>
+  <div class="card"><b>Gemini API Key</b>
+    <p class="sub">到 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 免費建立,貼在這裡。Key 只存在這支手機的瀏覽器裡。</p>
+    <input id="s_key" type="password" autocomplete="off" placeholder="AIza…" value="${esc(S.apiKey)}">
+    <p class="sub">模型</p><input id="s_model" type="text" value="${esc(S.model)}"></div>
+  <div class="card"><b>價格換算成</b><select id="s_cur">${CURRENCIES.map(c=>`<option ${c===S.currency?'selected':''}>${c}</option>`).join('')}</select>
+    <p><b>翻譯成</b></p><select id="s_lang">${LANGS.map(l=>`<option value="${l[0]}" ${l[0]===S.lang?'selected':''}>${l[1]}</option>`).join('')}</select></div>
+  <div class="card"><b>我的過敏原</b><div class="sub">勾選後,菜單會用紅字警示</div>
+    ${Object.entries(ALG).map(([k,v])=>`<label class="opt">${v}<input type="checkbox" data-alg="${k}" ${S.allergens.includes(k)?'checked':''}></label>`).join('')}</div>`;
+}
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id==='s_cur') S.currency=t.value;
+  else if (t.id==='s_lang') S.lang=t.value;
+  else if (t.dataset.alg) S.allergens = t.checked ? [...new Set([...S.allergens,t.dataset.alg])] : S.allergens.filter(a=>a!==t.dataset.alg);
+  else return;
+  save('ml_settings',S);
+});
+document.addEventListener('input', e => {
+  if (e.target.id==='s_key'){ S.apiKey=e.target.value.trim(); save('ml_settings',S); refreshNeedKey(); }
+  if (e.target.id==='s_model'){ S.model=e.target.value.trim()||'gemini-3.5-flash'; save('ml_settings',S); }
+  if (e.target.id==='search'){ q=e.target.value; renderMenu(); }
+});
+function refreshNeedKey(){ $('#needKey').classList.toggle('hidden', !!S.apiKey); }
+
+/* ---------- Gemini ---------- */
+const STR={type:'STRING'}, NUM={type:'NUMBER'};
+const SCHEMA = {type:'OBJECT',properties:{
+  restaurantName:STR, sourceLanguage:STR, currency:STR,
+  items:{type:'ARRAY',items:{type:'OBJECT',properties:{
+    originalName:STR, romanization:STR, translatedName:STR, category:STR, description:STR, priceOriginal:NUM,
+    mainIngredients:{type:'ARRAY',items:STR},
+    allergens:{type:'ARRAY',items:{type:'STRING',enum:Object.keys(ALG)}},
+    nutrition:{type:'OBJECT',properties:{kcal:NUM,proteinG:NUM,carbsG:NUM,fatG:NUM,fiberG:NUM}}
+  },required:['originalName','translatedName','category','description','mainIngredients','allergens']}}
+},required:['sourceLanguage','currency','items']};
+
+const prompt = lang => `You are a menu-reading assistant for travelers. Read the attached restaurant menu photo and return JSON that follows the schema.
+Rules:
+- originalName: copy the dish name exactly as printed, character by character. Never translate or "fix" it.
+- translatedName and description: write in ${lang}. description is 1-2 sentences explaining what the dish is.
+- romanization: pronunciation of originalName in Latin letters (romaji, pinyin, RTGS...). Omit if the menu is already in Latin script.
+- priceOriginal: the number printed on the menu, no currency symbol. Omit if there is no price.
+- currency: ISO 4217 code inferred from the symbols or the country.
+- sourceLanguage: ISO 639-1 code of the menu language.
+- category: use the menu's own section headings, translated to ${lang}.
+- mainIngredients: 3-6 typical ingredients, in ${lang}.
+- allergens: only values from the allowed list that this dish typically contains. If unsure, include it (be conservative).
+- nutrition: rough estimate for one serving.
+- Skip anything that is not a dish or drink (address, phone number, notes).`;
+
+function toJpegBase64(file, max=2048){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{
+      const sc=Math.min(1,max/Math.max(img.width,img.height)), c=document.createElement('canvas');
+      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',.85).split(',')[1]);
+    };
+    img.onerror=()=>rej(new Error('無法讀取這張圖片')); img.src=url;
+  });
+}
+
+async function scanImage(file){
+  const data = await toJpegBase64(file);
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model)}:generateContent`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
+    body: JSON.stringify({
+      contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data}},{text:prompt(S.lang)}]}],
+      generationConfig:{temperature:0.2,responseMimeType:'application/json',responseSchema:SCHEMA}
+    })
+  });
+  if(!res.ok) throw new Error(`Gemini API 錯誤 ${res.status}\n${(await res.text()).slice(0,400)}`);
+  const j = await res.json();
+  const text = (j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('')
+    .replace(/^```json\s*|```\s*$/g,'').trim();
+  if(!text) throw new Error('AI 沒有回傳內容(可能被安全機制擋下),請換一張照片再試。');
+  const m = JSON.parse(text);
+  m.items = (m.items||[]).filter(i=>i&&i.originalName).map(i=>({...i,mainIngredients:i.mainIngredients||[],allergens:(i.allergens||[]).filter(a=>ALG[a])}));
+  if(!m.items.length) throw new Error('沒有辨識到菜色,請拍得更清楚一點。');
+  return m;
+}
+
+async function onFile(e){
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  hide('#err');
+  if(!S.apiKey){ switchTab('settings'); toast('請先貼上 Gemini API Key'); return; }
+  show('#busy');
+  try{
+    const m=await scanImage(f), id=Date.now();
+    H.unshift({id,menu:m}); H=H.slice(0,30); save('ml_history',H); renderHistory();
+    openMenu(m,id);
+  }catch(err){ $('#err').textContent='辨識失敗:'+err.message; show('#err'); }
+  finally{ hide('#busy'); }
+}
+$('#fileCam').addEventListener('change',onFile);
+$('#fileLib').addEventListener('change',onFile);
+
+/* ---------- 匯率 ---------- */
+async function getRate(from,to){
+  if(!from||!to) return null; if(from===to) return 1;
+  let c=load('ml_rates',null);
+  if(!c||Date.now()-c.t>864e5){
+    try{ const j=await (await fetch('https://open.er-api.com/v6/latest/USD')).json(); if(j.rates){ c={t:Date.now(),rates:j.rates}; save('ml_rates',c); } }catch{}
+  }
+  const f=c?.rates?.[from], t=c?.rates?.[to];
+  return f&&t ? t/f : null;
+}
+const money=(v,cur)=>{ try{ return new Intl.NumberFormat('zh-TW',{style:'currency',currency:cur}).format(v) }catch{ return `${v} ${cur}` } };
+
+/* ---------- 菜單 ---------- */
+let menu=null, menuId=null, rate=null, cat=null, q='';
+const cart={currency:'',lines:[]};
+const hitsOf = it => it.allergens.filter(a=>S.allergens.includes(a));
+const priceText = it => {
+  if(it.priceOriginal==null) return '';
+  const o=money(it.priceOriginal,menu.currency);
+  return (!rate||menu.currency===S.currency) ? o : `${money(it.priceOriginal*rate,S.currency)}(${o})`;
+};
+
+async function openMenu(m,id){
+  menu=m; menuId=id; cat=null; q=''; rate=null; $('#search').value='';
+  $('#menuTitle').textContent=m.restaurantName||'菜單';
+  renderMenu(); updateCartBtn(); show('#menuScreen'); $('#menuScreen').scrollTop=0;
+  rate=await getRate(m.currency,S.currency); renderMenu();
+}
+function renderMenu(){
+  if(!menu) return;
+  const cats=[...new Set(menu.items.map(i=>i.category))];
+  $('#chips').innerHTML=[`<span class="chip ${cat==null?'on':''}" data-act="cat" data-c="">全部</span>`,
+    ...cats.map(c=>`<span class="chip ${cat===c?'on':''}" data-act="cat" data-c="${esc(c)}">${esc(c)}</span>`)].join('');
+  const ql=q.trim().toLowerCase();
+  $('#list').innerHTML=menu.items.map((it,i)=>({it,i})).filter(({it})=>
+    (cat==null||it.category===cat)&&(!ql||(it.translatedName+' '+it.originalName+' '+(it.romanization||'')).toLowerCase().includes(ql))
+  ).map(({it,i})=>{
+    const h=hitsOf(it);
+    return `<div class="row" data-act="open" data-i="${i}"><div class="name">${esc(it.translatedName)}</div>
+      <div class="sub">${esc([it.originalName,it.romanization].filter(Boolean).join(' · '))}</div>
+      <div class="price">${esc(priceText(it))}</div>
+      ${h.length?`<div class="tag">⚠️ 可能含:${esc(h.map(a=>ALG[a]).join('、'))}</div>`:''}</div>`;
+  }).join('')||'<p class="sub">沒有符合的菜色</p>';
+}
+function openDetail(i){
+  const it=menu.items[i], h=hitsOf(it), n=it.nutrition;
+  $('#detail').innerHTML=`
+  <div class="topbar"><button data-act="closeDetail">‹ 返回</button><div></div><button data-act="speak" data-i="${i}">🔊 發音</button></div>
+  <div class="pad">
+    <h1>${esc(it.translatedName)}</h1><div class="orig">${esc(it.originalName)}</div>
+    ${it.romanization?`<div class="sub">${esc(it.romanization)}</div>`:''}
+    <div class="price">${esc(priceText(it))}</div>
+    ${h.length?`<div class="warn">⚠️ 偵測到可能的過敏原:${esc(h.map(a=>ALG[a]).join('、'))}。點餐前請再向店員確認。</div>`:''}
+    <h3>這是什麼</h3><p>${esc(it.description)}</p>
+    <h3>主要食材</h3><p>${esc(it.mainIngredients.join('、'))}</p>
+    ${it.allergens.length?`<h3>可能含有的過敏原</h3><p>${esc(it.allergens.map(a=>ALG[a]).join('、'))}</p>`:''}
+    ${n&&n.kcal!=null?`<h3>營養(AI 估算,僅供參考)</h3><div class="nut">
+      <div><b>${Math.round(n.kcal)}</b>kcal</div><div><b>${Math.round(n.proteinG||0)}g</b>蛋白質</div>
+      <div><b>${Math.round(n.carbsG||0)}g</b>碳水</div><div><b>${Math.round(n.fatG||0)}g</b>脂肪</div><div><b>${Math.round(n.fiberG||0)}g</b>纖維</div></div>`:''}
+  </div>
+  <div class="bottombar"><button class="primary" data-act="add" data-i="${i}">＋ 加入點餐</button></div>`;
+  show('#detail'); $('#detail').scrollTop=0;
+}
+function speak(text,lang){
+  if(!('speechSynthesis' in window)) return toast('此瀏覽器不支援語音');
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=SPEECH[(lang||'').slice(0,2).toLowerCase()]||lang||'en-US'; u.rate=.9;
+  const v=speechSynthesis.getVoices().find(v=>v.lang.replace('_','-')===u.lang); if(v) u.voice=v;
+  speechSynthesis.speak(u);
+}
+
+/* ---------- 點餐 / 給服務生看 ---------- */
+function updateCartBtn(){ $('#orderBtn').textContent='點餐 '+cart.lines.reduce((s,l)=>s+l.qty,0); }
+function addToCart(i){
+  if(cart.currency!==menu.currency){ cart.lines=[]; cart.currency=menu.currency; }
+  const key=menuId+':'+i, l=cart.lines.find(l=>l.key===key);
+  if(l) l.qty++; else cart.lines.push({key,item:menu.items[i],qty:1});
+  updateCartBtn(); toast('已加入點餐');
+}
+function renderWaiter(){
+  const total=cart.lines.reduce((s,l)=>s+(l.item.priceOriginal||0)*l.qty,0);
+  $('#waiter').innerHTML=`<div class="topbar"><button data-act="closeWaiter">完成</button><div>給服務生看</div><div></div></div>
+  <div class="pad"><div class="sub">我想點 / I'd like to order</div>
+  ${cart.lines.map(l=>`<div class="wline"><div><div class="big">${esc(l.item.originalName)}</div>
+    ${l.item.romanization?`<div class="sub">${esc(l.item.romanization)}</div>`:''}</div>
+    <div class="qty"><button data-act="qty" data-key="${esc(l.key)}" data-d="-1">−</button><b>×${l.qty}</b><button data-act="qty" data-key="${esc(l.key)}" data-d="1">＋</button></div></div>`).join('')||'<p class="sub">尚未點餐</p>'}
+  ${cart.lines.length?`<div class="total"><span>預估總價</span><b>${esc(money(total,cart.currency))}</b></div>`:''}</div>`;
+}
+
+/* ---------- 歷史 ---------- */
+function renderHistory(){
+  $('#tab-history').innerHTML='<h1>歷史</h1>'+(H.length?H.map(h=>`<div class="row" data-act="hist" data-id="${h.id}">
+    <div class="name">${esc(h.menu.restaurantName||'未命名菜單')}</div>
+    <div class="sub">${h.menu.items.length} 道菜 · ${new Date(h.id).toLocaleDateString('zh-TW')}
+    <span style="float:right;color:var(--red)" data-act="del" data-id="${h.id}">刪除</span></div></div>`).join(''):'<p class="sub">還沒有紀錄</p>');
+}
+
+/* ---------- 事件 ---------- */
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id==='tab-'+t));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='settings') renderSettings(); if(t==='history') renderHistory(); window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{
+  const nb=e.target.closest('nav button'); if(nb) return switchTab(nb.dataset.tab);
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const a=b.dataset.act, i=+b.dataset.i;
+  if(a==='del'){ e.stopPropagation(); if(confirm('刪除這筆紀錄?')){ H=H.filter(h=>String(h.id)!==b.dataset.id); save('ml_history',H); renderHistory(); } }
+  else if(a==='hist'){ const h=H.find(h=>String(h.id)===b.dataset.id); if(h) openMenu(h.menu,h.id); }
+  else if(a==='closeMenu') hide('#menuScreen');
+  else if(a==='cat'){ cat=b.dataset.c||null; renderMenu(); }
+  else if(a==='open') openDetail(i);
+  else if(a==='closeDetail') hide('#detail');
+  else if(a==='speak') speak(menu.items[i].originalName,menu.sourceLanguage);
+  else if(a==='add') addToCart(i);
+  else if(a==='order'){ renderWaiter(); show('#waiter'); }
+  else if(a==='closeWaiter') hide('#waiter');
+  else if(a==='qty'){ const l=cart.lines.find(l=>l.key===b.dataset.key); if(l){ l.qty+=+b.dataset.d; if(l.qty<=0) cart.lines=cart.lines.filter(x=>x!==l); updateCartBtn(); renderWaiter(); } }
+});
+
+refreshNeedKey(); renderSettings(); renderHistory();
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
