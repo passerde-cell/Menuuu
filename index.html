@@ -103,7 +103,7 @@ const ALG = {gluten:'麩質',crustaceans:'甲殼類',eggs:'蛋',fish:'魚',peanu
 const CURRENCIES = ['TWD','USD','JPY','EUR','KRW','HKD','CNY','GBP','THB','SGD','VND','AUD'];
 const LANGS = [['Traditional Chinese (Taiwan)','繁體中文'],['English','English'],['Japanese','日本語']];
 const SPEECH = {ja:'ja-JP',ko:'ko-KR',zh:'zh-TW',th:'th-TH',fr:'fr-FR',it:'it-IT',es:'es-ES',de:'de-DE',en:'en-US',vi:'vi-VN',id:'id-ID',pt:'pt-PT',tr:'tr-TR'};
-let S = Object.assign({apiKey:'',model:'gemini-3.5-flash',currency:'TWD',lang:LANGS[0][0],allergens:[]}, load('ml_settings',{}));
+let S = Object.assign({apiKey:'',model:'gemini-3.8-flash',currency:'TWD',lang:LANGS[0][0],allergens:[]}, load('ml_settings',{}));
 let H = load('ml_history', []);
 
 function renderSettings(){
@@ -128,7 +128,7 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => {
   if (e.target.id==='s_key'){ S.apiKey=e.target.value.trim(); save('ml_settings',S); refreshNeedKey(); }
-  if (e.target.id==='s_model'){ S.model=e.target.value.trim()||'gemini-3.5-flash'; save('ml_settings',S); }
+  if (e.target.id==='s_model'){ S.model=e.target.value.trim()||'gemini-3.8-flash'; save('ml_settings',S); }
   if (e.target.id==='search'){ q=e.target.value; renderMenu(); }
 });
 function refreshNeedKey(){ $('#needKey').classList.toggle('hidden', !!S.apiKey); }
