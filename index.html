@@ -2,9 +2,9 @@
 <html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="MenuLens"><meta name="theme-color" content="#1f6f7a">
+<meta name="apple-mobile-web-app-title" content="Menuuu"><meta name="theme-color" content="#1f6f7a">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon.png">
-<title>MenuLens</title>
+<title>Menuuu</title>
 <style>
 :root{--bg:#f1f5f6;--cd:#fff;--tx:#0f172a;--sub:#64748b;--pri:#1f6f7a;--dk:#0f2a3d;--ln:#e2e8f0;--red:#dc2626;--rb:#fef2f2}
 @media(prefers-color-scheme:dark){:root{--bg:#0b1114;--cd:#162027;--tx:#f1f5f9;--sub:#94a3b8;--pri:#38b2c0;--dk:#0a1a26;--ln:#26343d;--rb:#3b1416}}
@@ -92,7 +92,7 @@ en:{home:'Import',hist:'History',set:'Settings',
   impTitle:'Import Menu JSON',impAppTitle:'Append Menu Pages',
   impName:'Restaurant name (optional)',impNamePh:'Leave blank to use Gem result',
   impClip:'📋 Paste from Clipboard & Import',impLbl:'Or paste JSON below',
-  impPh:'Paste the JSON output from your MenuLens Gem here…',impGo:'Import Menu',impAdd:'Append to Current Menu',
+  impPh:'Paste the JSON output from your Menuuu Gem here…',impGo:'Import Menu',impAdd:'Append to Current Menu',
   impClr:'Clear text',impTip:'Tip: For long menus, scan 1–3 pages at a time in Gemini Gem, then use "+ Add Pages" inside the menu to merge them.',
   addPages:'+ Add Pages',addedMsg:'Added {n} dishes',dupMsg:'All dishes already exist in this menu',
   clipFail:'Clipboard access blocked by browser. Please tap the box below and paste manually.',
@@ -504,7 +504,7 @@ const hrow=h=>`<div class="hr" data-a="hist" data-id="${h.id}"><div class="th"${
 
 function home(){
   const hasApi=Boolean(S.key||S.proxy);
-  $('#t-scan').innerHTML=`<b style="font-size:1.2rem;color:var(--pri)">🍽 MenuLens</b>
+  $('#t-scan').innerHTML=`<b style="font-size:1.2rem;color:var(--pri)">🍽 Menuuu</b>
 <button class="scan" data-a="imp"><span class="cam">📋</span><div><b>${t('pasteBtn')}</b><small>${t('pasteSub')} · ${S.cur}</small></div></button>
 <details class="sec"${hasApi?' open':''}><summary><span>${t('apiSec')}</span><span>▾</span></summary>
   <div class="three">
