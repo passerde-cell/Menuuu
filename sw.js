@@ -1,5 +1,5 @@
 // 網路優先、離線時用快取:讓 App 外殼與歷史紀錄在沒網路時也能開
-const CACHE = 'menuuu-v3';
+const CACHE = 'menuuu-v4';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
